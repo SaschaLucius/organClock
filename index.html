@@ -39,45 +39,31 @@
   <canvas id="clockCanvas"></canvas>
 
   <script>
-    // Define organ names and corresponding time spans.
-    const organs = [
-      "Gallenblase",     // 23:00 - 01:00 (Mitte um 0:00)
-      "Leber",           // 01:00 - 03:00 (Mitte um 2:00)
-      "Lunge",           // 03:00 - 05:00 (Mitte um 4:00)
-      "Dickdarm",        // 05:00 - 07:00 (Mitte um 6:00)
-      "Magen",           // 07:00 - 09:00 (Mitte um 8:00)
-      "Milz",            // 09:00 - 11:00 (Mitte um 10:00)
-      "Herz",            // 11:00 - 13:00 (Mitte um 12:00)
-      "Dünndarm",        // 13:00 - 15:00 (Mitte um 14:00)
-      "Blase",           // 15:00 - 17:00 (Mitte um 16:00)
-      "Niere",           // 17:00 - 19:00 (Mitte um 18:00)
-      "Perikard",        // 19:00 - 21:00 (Mitte um 20:00)
-      "Dreifacher-Erwärmer" // 21:00 - 23:00 (Mitte um 22:00)
+    // Replace the definitions for organs and timeSpans with this new constant:
+    const organSegments = [
+      { name: "Gallenblase",       startTime: "23:00", endTime: "01:00", element: "Holz" },
+      { name: "Leber",             startTime: "01:00", endTime: "03:00", element: "Holz" },
+      { name: "Lunge",             startTime: "03:00", endTime: "05:00", element: "Metall" },
+      { name: "Dickdarm",          startTime: "05:00", endTime: "07:00", element: "Metall" },
+      { name: "Magen",             startTime: "07:00", endTime: "09:00", element: "Erde" },
+      { name: "Milz",              startTime: "09:00", endTime: "11:00", element: "Erde" },
+      { name: "Herz",              startTime: "11:00", endTime: "13:00", element: "Feuer" },
+      { name: "Dünndarm",          startTime: "13:00", endTime: "15:00", element: "Feuer" },
+      { name: "Blase",             startTime: "15:00", endTime: "17:00", element: "Wasser" },
+      { name: "Niere",             startTime: "17:00", endTime: "19:00", element: "Wasser" },
+      { name: "Perikard",          startTime: "19:00", endTime: "21:00", element: "Feuer" },
+      { name: "Dreifacher-Erwärmer", startTime: "21:00", endTime: "23:00", element: "Feuer" }
     ];
 
-    const timeSpans = [
-      "23:00 - 01:00",
-      "01:00 - 03:00",
-      "03:00 - 05:00",
-      "05:00 - 07:00",
-      "07:00 - 09:00",
-      "09:00 - 11:00",
-      "11:00 - 13:00",
-      "13:00 - 15:00",
-      "15:00 - 17:00",
-      "17:00 - 19:00",
-      "19:00 - 21:00",
-      "21:00 - 23:00"
-    ];
-
-    // Determine the current organ segment index (0-11) based on local hour.
+    // Update getCurrentSegmentIndex (remains unchanged if you wish to keep the 2-hour slot logic).
     function getCurrentSegmentIndex() {
       const hour = new Date().getHours();
       return Math.floor((hour + 1) / 2) % 12;
     }
 
+    // Update getCurrentOrgan to use the new constant.
     function getCurrentOrgan() {
-      return organs[getCurrentSegmentIndex()];
+      return organSegments[getCurrentSegmentIndex()].name;
     }
 
     // Update current time display.
@@ -162,10 +148,10 @@
         ctx.font = "bold 12px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
-        ctx.fillText(organs[i], 0, -2);
+        ctx.fillText(organSegments[i].name, 0, -2);
         ctx.font = "10px Arial";
         ctx.textBaseline = "top";
-        ctx.fillText(timeSpans[i], 0, 2);
+        ctx.fillText(organSegments[i].startTime + " - " + organSegments[i].endTime, 0, 2);
         ctx.restore();
       }
 

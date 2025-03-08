@@ -153,7 +153,7 @@
           geschmack: "bitter",
         },
         {
-          name: "Duenndarm",
+          name: "Dünndarm",
           startTime: "13:00",
           endTime: "15:00",
           element: "Feuer",
@@ -213,7 +213,7 @@
           geschmack: "bitter",
         },
         {
-          name: "Dreifacher-Erwärmer",
+          name: "3F Erwärmer",
           startTime: "21:00",
           endTime: "23:00",
           element: "Feuer",
@@ -328,13 +328,25 @@
           }
           ctx.rotate(textRotation);
 
-          // Set text styles.
+          // Scale fonts based on the page size.
+          const titleFontSize = Math.max(
+            9,
+            Math.floor(Math.min(window.innerWidth, window.innerHeight) / 45)
+          );
+          const timeFontSize = Math.max(
+            7,
+            Math.floor(Math.min(window.innerWidth, window.innerHeight) / 55)
+          );
+
+          // Set text styles for the organ name.
           ctx.fillStyle = "#333";
-          ctx.font = "bold 12px Arial";
+          ctx.font = `bold ${titleFontSize}px Arial`;
           ctx.textAlign = "center";
           ctx.textBaseline = "bottom";
           ctx.fillText(organSegments[i].name, 0, -2);
-          ctx.font = "10px Arial";
+
+          // Set text styles for the time.
+          ctx.font = `${timeFontSize}px Arial`;
           ctx.textBaseline = "top";
           ctx.fillText(
             organSegments[i].startTime + " - " + organSegments[i].endTime,

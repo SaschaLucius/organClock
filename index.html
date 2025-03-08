@@ -46,8 +46,7 @@
           startTime: "23:00",
           endTime: "01:00",
           element: "Holz",
-          yinMeridian: "Leber",
-          yangMeridian: "Gallenblase",
+          meridian: "yang",
           funktion: "Verteilung, Speicherung",
           jahreszeit: "Fruehling",
           klima: "Wind",
@@ -62,8 +61,7 @@
           startTime: "01:00",
           endTime: "03:00",
           element: "Holz",
-          yinMeridian: "Leber",
-          yangMeridian: "Gallenblase",
+          meridian: "yin",
           funktion: "Verteilung, Speicherung",
           jahreszeit: "Fruehling",
           klima: "Wind",
@@ -78,8 +76,7 @@
           startTime: "03:00",
           endTime: "05:00",
           element: "Metall",
-          yinMeridian: "Lunge",
-          yangMeridian: "Dickdarm",
+          meridian: "yin",
           funktion: "Austausch",
           jahreszeit: "Herbst",
           klima: "Trockenheit",
@@ -94,8 +91,7 @@
           startTime: "05:00",
           endTime: "07:00",
           element: "Metall",
-          yinMeridian: "Lunge",
-          yangMeridian: "Dickdarm",
+          meridian: "yang",
           funktion: "Austausch",
           jahreszeit: "Herbst",
           klima: "Trockenheit",
@@ -110,8 +106,7 @@
           startTime: "07:00",
           endTime: "09:00",
           element: "Erde",
-          yinMeridian: "Milz, Pankreas",
-          yangMeridian: "Magen",
+          meridian: "yang",
           funktion: "Verdauung, Säfte",
           jahreszeit: "Spätsommer",
           klima: "Feuchtigkeit",
@@ -126,8 +121,7 @@
           startTime: "09:00",
           endTime: "11:00",
           element: "Erde",
-          yinMeridian: "Milz, Pankreas",
-          yangMeridian: "Magen",
+          meridian: "yin",
           funktion: "Verdauung, Säfte",
           jahreszeit: "Spätsommer",
           klima: "Feuchtigkeit",
@@ -142,8 +136,7 @@
           startTime: "11:00",
           endTime: "13:00",
           element: "Feuer",
-          yinMeridian: "Herz, Kreislauf",
-          yangMeridian: "Duenndarm, 3E",
+          meridian: "yin",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -158,8 +151,7 @@
           startTime: "13:00",
           endTime: "15:00",
           element: "Feuer",
-          yinMeridian: "Herz, Kreislauf",
-          yangMeridian: "Duenndarm, 3E",
+          meridian: "yang",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -174,8 +166,7 @@
           startTime: "15:00",
           endTime: "17:00",
           element: "Wasser",
-          yinMeridian: "Niere",
-          yangMeridian: "Blase",
+          meridian: "yang",
           funktion: "Reinigung",
           jahreszeit: "Winter",
           klima: "Kälte",
@@ -190,8 +181,7 @@
           startTime: "17:00",
           endTime: "19:00",
           element: "Wasser",
-          yinMeridian: "Niere",
-          yangMeridian: "Blase",
+          meridian: "yin",
           funktion: "Reinigung",
           jahreszeit: "Winter",
           klima: "Kälte",
@@ -206,8 +196,7 @@
           startTime: "19:00",
           endTime: "21:00",
           element: "Feuer",
-          yinMeridian: "Herz, Kreislauf",
-          yangMeridian: "Duenndarm, 3E",
+          meridian: "yin",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -222,8 +211,7 @@
           startTime: "21:00",
           endTime: "23:00",
           element: "Feuer",
-          yinMeridian: "Herz, Kreislauf",
-          yangMeridian: "Duenndarm, 3E",
+          meridian: "yang",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -234,6 +222,15 @@
           geschmack: "bitter",
         },
       ];
+
+      // Add the elementColors constant near the top of your script.
+      const elementColors = {
+        Holz: "#90EE90", // Light Green
+        Metall: "#D3D3D3", // Light Grey
+        Erde: "#DEB887", // Light Brown
+        Feuer: "#FFA07A", // Light Red
+        Wasser: "#ADD8E6", // Light Blue
+      };
 
       // Update getCurrentSegmentIndex (remains unchanged if you wish to keep the 2-hour slot logic).
       function getCurrentSegmentIndex() {
@@ -294,8 +291,8 @@
           const startAngle = offset + i * segmentAngle;
           const endAngle = startAngle + segmentAngle;
 
-          // Fill segment (highlight the current organ's segment).
-          ctx.fillStyle = i === currentIndex ? "#ffcc00" : "#d0e1f9";
+          // Fill segment based on its element.
+          ctx.fillStyle = elementColors[organSegments[i].element] || "#d0e1f9";
           ctx.beginPath();
           ctx.moveTo(centerX, centerY);
           ctx.arc(centerX, centerY, radius, startAngle, endAngle);

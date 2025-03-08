@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Organuhr</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    h1 {
+      color: #333;
+    }
+    #info {
+      margin-bottom: 20px;
+    }
+    #currentTime, #currentOrgan {
+      font-size: 1.2em;
+      margin: 5px 0;
+    }
+    canvas {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+  </style>
+</head>
+<body>
+  <h1>Organuhr</h1>
+  <div id="info">
+    <div id="currentTime"></div>
+    <div id="currentOrgan"></div>
+  </div>
+  <canvas id="clockCanvas"></canvas>
+
+  <script>
+    // Define organ names and corresponding time spans.
+    const organs = [
+      "Gallenblase",     // 23:00 - 01:00 (Mitte um 0:00)
+      "Leber",           // 01:00 - 03:00 (Mitte um 2:00)
+      "Lunge",           // 03:00 - 05:00 (Mitte um 4:00)
+      "Dickdarm",        // 05:00 - 07:00 (Mitte um 6:00)
+      "Magen",           // 07:00 - 09:00 (Mitte um 8:00)
+      "Milz",            // 09:00 - 11:00 (Mitte um 10:00)
+      "Herz",            // 11:00 - 13:00 (Mitte um 12:00)
+      "Dünndarm",        // 13:00 - 15:00 (Mitte um 14:00)
+      "Blase",           // 15:00 - 17:00 (Mitte um 16:00)
+      "Niere",           // 17:00 - 19:00 (Mitte um 18:00)
+      "Perikard",        // 19:00 - 21:00 (Mitte um 20:00)
+      "Dreifacher-Erwärmer" // 21:00 - 23:00 (Mitte um 22:00)
+    ];
+
+    const timeSpans = [
+      "23:00 - 01:00",
+      "01:00 - 03:00",
+      "03:00 - 05:00",
+      "05:00 - 07:00",
+      "07:00 - 09:00",
+      "09:00 - 11:00",
+      "11:00 - 13:00",
+      "13:00 - 15:00",
+      "15:00 - 17:00",
+      "17:00 - 19:00",
+      "19:00 - 21:00",
+      "21:00 - 23:00"
+    ];
+
+    // Determine the current organ segment index (0-11) based on local hour.
+    function getCurrentSegmentIndex() {
+      const hour = new Date().getHours();
+      return Math.floor((hour + 1) / 2) % 12;
+    }
+
+    function getCurrentOrgan() {
+      return organs[getCurrentSegmentIndex()];
+    }
+
+    // Update current time display.
+    function updateCurrentTime() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      document.getElementById("currentTime").textContent = "Zeit: " + timeString;
+    }
+
+    // Update current organ display.
+    function updateCurrentOrgan() {
+      document.getElementById("currentOrgan").textContent = "Aktuelles Organ: " + getCurrentOrgan();
+    }
+
+    // Resize canvas to be responsive.
+    function resizeCanvas() {
+      const canvas = document.getElementById("clockCanvas");
+      // Use 80% of the smaller window dimension.
+      const size = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+      canvas.width = size;
+      canvas.height = size;
+    }
+
+    // Draw the circular organ clock.
+    function drawClock() {
+      const canvas = document.getElementById("clockCanvas");
+      if (!canvas.getContext) return;
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const radius = Math.min(centerX, centerY) - 10; // Padding
+      
+      // Clear canvas.
+      ctx.clearRect(0, 0, width, height);
+      
+      // Each segment covers 30° (2π/12).
+      const segmentAngle = (2 * Math.PI) / 12;
+      // Offset so that 23:00 is at the top.
+      const offset = -Math.PI / 2 - segmentAngle/2;
+      const currentIndex = getCurrentSegmentIndex();
+
+      // Draw each segment.
+      for (let i = 0; i < 12; i++) {
+        const startAngle = offset + i * segmentAngle;
+        const endAngle = startAngle + segmentAngle;
+
+        // Fill segment (highlight the current organ's segment).
+        ctx.fillStyle = (i === currentIndex) ? "#ffcc00" : "#d0e1f9";
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fill();
+
+        // Draw segment border.
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Calculate the midpoint angle for text placement.
+        const midAngle = startAngle + segmentAngle / 2;
+        // Position for the text at 70% of the radius.
+        const textRadius = radius * 0.7;
+        const textX = centerX + textRadius * Math.cos(midAngle);
+        const textY = centerY + textRadius * Math.sin(midAngle);
+
+        // Save context state to rotate text.
+        ctx.save();
+        ctx.translate(textX, textY);
+
+        // Calculate text rotation so that it appears radial and upright.
+        let textRotation = midAngle + Math.PI / 2;
+        if (textRotation > Math.PI/2 && textRotation < 3 * Math.PI/2) {
+          textRotation += Math.PI;
+        }
+        ctx.rotate(textRotation);
+
+        // Set text styles.
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(organs[i], 0, -2);
+        ctx.font = "10px Arial";
+        ctx.textBaseline = "top";
+        ctx.fillText(timeSpans[i], 0, 2);
+        ctx.restore();
+      }
+
+      // Draw the outer circle.
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = "#333";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Draw a small center circle.
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = "#333";
+      ctx.fill();
+
+    // Draw the current time marker (similar to an hour hand, but continuous).
+    const now = new Date();
+    // Calculate hour plus fraction from minutes.
+    const hour = now.getHours(); // 24
+    const minutes = now.getMinutes(); // 60
+    const fraction = minutes / 60;
+    const markerAngle = offset + (((hour + 1) + fraction) * ((2 * Math.PI) / 24));
+    
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    // Draw the marker to 90% of the radius.
+    ctx.lineTo(centerX + radius * 0.9 * Math.cos(markerAngle), centerY + radius * 0.9 * Math.sin(markerAngle));
+    ctx.strokeStyle = "#e74c3c"; // A red marker.
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    }
+
+    // Main update function.
+    function updateOrganClock() {
+      updateCurrentTime();
+      updateCurrentOrgan();
+      drawClock();
+    }
+
+    // Initialize on page load.
+    function init() {
+      resizeCanvas();
+      updateOrganClock();
+      // Update the display every second.
+      setInterval(updateOrganClock, 1000);
+    }
+    
+    // Resize canvas when window is resized.
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+      updateOrganClock();
+    });
+    
+    window.onload = init;
+  </script>
+</body>
+</html>

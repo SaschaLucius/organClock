@@ -37,7 +37,13 @@
       <div id="currentTime"></div>
       <div id="currentOrgan"></div>
     </div>
+
     <canvas id="clockCanvas"></canvas>
+
+    <div
+      id="hoverDetails"
+      style="margin-bottom: 20px; font-size: 0.9em; color: #555"
+    ></div>
 
     <script>
       const organSegments = [
@@ -372,6 +378,62 @@
         ctx.stroke();
       }
 
+      // Replace the existing handleMouseMove function with this click version.
+      function handleMouseClick(event) {
+        const canvas = document.getElementById("clockCanvas");
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        const width = canvas.width;
+        const height = canvas.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const dx = mouseX - centerX;
+        const dy = mouseY - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Same radius and segment settings as in drawClock.
+        const radius = Math.min(centerX, centerY) - 10;
+        if (distance > radius) {
+          // Clear details when clicking outside the circle.
+          document.getElementById("hoverDetails").textContent = "";
+          return;
+        }
+        const segmentAngle = (2 * Math.PI) / 12;
+        const offset = -Math.PI / 2 - segmentAngle / 2;
+        let angle = Math.atan2(dy, dx);
+        if (angle < 0) angle += 2 * Math.PI;
+        let adjustedAngle = angle - offset;
+        if (adjustedAngle < 0) {
+          adjustedAngle += 2 * Math.PI;
+        }
+        const clickedIndex = Math.floor(adjustedAngle / segmentAngle) % 12;
+        const organ = organSegments[clickedIndex];
+
+        // Build a details string
+        const details = `
+    Name: ${organ.name}
+    Zeit: ${organ.startTime} - ${organ.endTime}
+    Element: ${organ.element}
+    Meridian: ${organ.meridian}
+    Funktion: ${organ.funktion}
+    Jahreszeit: ${organ.jahreszeit}
+    Klima: ${organ.klima}
+    Farbe: ${organ.farbe}
+    Körpergewebe: ${organ.koerpergewebe}
+    Körperflüssigkeit: ${organ.koerperfluessigkeit}
+    Sinnesorgan: ${organ.sinnesorgan}
+    Geschmack: ${organ.geschmack}
+        `;
+        // Show the details in the details div.
+        document.getElementById("hoverDetails").innerText = details.trim();
+      }
+
+      // Replace addCanvasHover with a new click listener setup.
+      function addCanvasClick() {
+        const canvas = document.getElementById("clockCanvas");
+        canvas.addEventListener("click", handleMouseClick);
+      }
+
       // Main update function.
       function updateOrganClock() {
         updateCurrentTime();
@@ -383,6 +445,7 @@
       function init() {
         resizeCanvas();
         updateOrganClock();
+        addCanvasClick();
         // Update the display every second.
         setInterval(updateOrganClock, 1000);
       }

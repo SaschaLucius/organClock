@@ -49,10 +49,10 @@
       const organSegments = [
         {
           name: "Gallenblase",
-          startTime: "23:00",
-          endTime: "01:00",
+          startTime: "23",
+          endTime: "01",
           element: "Holz",
-          meridian: "yang",
+          meridian: "Yang",
           funktion: "Verteilung, Speicherung",
           jahreszeit: "Fruehling",
           klima: "Wind",
@@ -64,10 +64,10 @@
         },
         {
           name: "Leber",
-          startTime: "01:00",
-          endTime: "03:00",
+          startTime: "01",
+          endTime: "03",
           element: "Holz",
-          meridian: "yin",
+          meridian: "Yin",
           funktion: "Verteilung, Speicherung",
           jahreszeit: "Fruehling",
           klima: "Wind",
@@ -79,10 +79,10 @@
         },
         {
           name: "Lunge",
-          startTime: "03:00",
-          endTime: "05:00",
+          startTime: "03",
+          endTime: "05",
           element: "Metall",
-          meridian: "yin",
+          meridian: "Yin",
           funktion: "Austausch",
           jahreszeit: "Herbst",
           klima: "Trockenheit",
@@ -94,10 +94,10 @@
         },
         {
           name: "Dickdarm",
-          startTime: "05:00",
-          endTime: "07:00",
+          startTime: "05",
+          endTime: "07",
           element: "Metall",
-          meridian: "yang",
+          meridian: "Yang",
           funktion: "Austausch",
           jahreszeit: "Herbst",
           klima: "Trockenheit",
@@ -109,10 +109,10 @@
         },
         {
           name: "Magen",
-          startTime: "07:00",
-          endTime: "09:00",
+          startTime: "07",
+          endTime: "09",
           element: "Erde",
-          meridian: "yang",
+          meridian: "Yang",
           funktion: "Verdauung, Säfte",
           jahreszeit: "Spätsommer",
           klima: "Feuchtigkeit",
@@ -124,10 +124,10 @@
         },
         {
           name: "Milz",
-          startTime: "09:00",
-          endTime: "11:00",
+          startTime: "09",
+          endTime: "11",
           element: "Erde",
-          meridian: "yin",
+          meridian: "Yin",
           funktion: "Verdauung, Säfte",
           jahreszeit: "Spätsommer",
           klima: "Feuchtigkeit",
@@ -139,10 +139,10 @@
         },
         {
           name: "Herz",
-          startTime: "11:00",
-          endTime: "13:00",
+          startTime: "11",
+          endTime: "13",
           element: "Feuer",
-          meridian: "yin",
+          meridian: "Yin",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -154,10 +154,10 @@
         },
         {
           name: "Dünndarm",
-          startTime: "13:00",
-          endTime: "15:00",
+          startTime: "13",
+          endTime: "15",
           element: "Feuer",
-          meridian: "yang",
+          meridian: "Yang",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -169,10 +169,10 @@
         },
         {
           name: "Blase",
-          startTime: "15:00",
-          endTime: "17:00",
+          startTime: "15",
+          endTime: "17",
           element: "Wasser",
-          meridian: "yang",
+          meridian: "Yang",
           funktion: "Reinigung",
           jahreszeit: "Winter",
           klima: "Kälte",
@@ -184,10 +184,10 @@
         },
         {
           name: "Niere",
-          startTime: "17:00",
-          endTime: "19:00",
+          startTime: "17",
+          endTime: "19",
           element: "Wasser",
-          meridian: "yin",
+          meridian: "Yin",
           funktion: "Reinigung",
           jahreszeit: "Winter",
           klima: "Kälte",
@@ -199,10 +199,10 @@
         },
         {
           name: "Perikard",
-          startTime: "19:00",
-          endTime: "21:00",
+          startTime: "19",
+          endTime: "21",
           element: "Feuer",
-          meridian: "yin",
+          meridian: "Yin",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -214,10 +214,10 @@
         },
         {
           name: "3F Erwärmer",
-          startTime: "21:00",
-          endTime: "23:00",
+          startTime: "21",
+          endTime: "23",
           element: "Feuer",
-          meridian: "yang",
+          meridian: "Yang",
           funktion: "Aufnehmen, Umwandeln",
           jahreszeit: "Sommer",
           klima: "Hitze",
@@ -288,7 +288,7 @@
 
         // Each segment covers 30° (2π/12).
         const segmentAngle = (2 * Math.PI) / 12;
-        // Offset so that 23:00 is at the top.
+        // Offset so that 23 is at the top.
         const offset = -Math.PI / 2 - segmentAngle / 2;
         const currentIndex = getCurrentSegmentIndex();
 
@@ -390,7 +390,25 @@
         ctx.stroke();
       }
 
-      // Replace the existing handleMouseMove function with this click version.
+      // Helper to build the details string for a given organ.
+      function buildOrganDetails(organ) {
+        return `
+Name: ${organ.name}
+Zeit: ${organ.startTime} - ${organ.endTime}
+Element: ${organ.element}
+Meridian: ${organ.meridian}
+Funktion: ${organ.funktion}
+Jahreszeit: ${organ.jahreszeit}
+Klima: ${organ.klima}
+Farbe: ${organ.farbe}
+Körpergewebe: ${organ.koerpergewebe}
+Körperflüssigkeit: ${organ.koerperfluessigkeit}
+Sinnesorgan: ${organ.sinnesorgan}
+Geschmack: ${organ.geschmack}
+        `;
+      }
+
+      // Updated click handler using the helper.
       function handleMouseClick(event) {
         const canvas = document.getElementById("clockCanvas");
         const rect = canvas.getBoundingClientRect();
@@ -403,10 +421,8 @@
         const dx = mouseX - centerX;
         const dy = mouseY - centerY;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        // Same radius and segment settings as in drawClock.
         const radius = Math.min(centerX, centerY) - 10;
         if (distance > radius) {
-          // Clear details when clicking outside the circle.
           document.getElementById("hoverDetails").textContent = "";
           return;
         }
@@ -421,22 +437,8 @@
         const clickedIndex = Math.floor(adjustedAngle / segmentAngle) % 12;
         const organ = organSegments[clickedIndex];
 
-        // Build a details string
-        const details = `
-    Name: ${organ.name}
-    Zeit: ${organ.startTime} - ${organ.endTime}
-    Element: ${organ.element}
-    Meridian: ${organ.meridian}
-    Funktion: ${organ.funktion}
-    Jahreszeit: ${organ.jahreszeit}
-    Klima: ${organ.klima}
-    Farbe: ${organ.farbe}
-    Körpergewebe: ${organ.koerpergewebe}
-    Körperflüssigkeit: ${organ.koerperfluessigkeit}
-    Sinnesorgan: ${organ.sinnesorgan}
-    Geschmack: ${organ.geschmack}
-        `;
-        // Show the details in the details div.
+        // Use the helper to build details.
+        const details = buildOrganDetails(organ);
         document.getElementById("hoverDetails").innerText = details.trim();
       }
 
@@ -444,6 +446,14 @@
       function addCanvasClick() {
         const canvas = document.getElementById("clockCanvas");
         canvas.addEventListener("click", handleMouseClick);
+      }
+
+      // Updated function to display current organ details on load.
+      function displayCurrentOrganDetails() {
+        const currentIndex = getCurrentSegmentIndex();
+        const organ = organSegments[currentIndex];
+        const details = buildOrganDetails(organ);
+        document.getElementById("hoverDetails").innerText = details.trim();
       }
 
       // Main update function.
@@ -457,6 +467,7 @@
       function init() {
         resizeCanvas();
         updateOrganClock();
+        displayCurrentOrganDetails(); // Preselect the current organ details.
         addCanvasClick();
         // Update the display every second.
         setInterval(updateOrganClock, 1000);
